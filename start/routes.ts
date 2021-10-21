@@ -1,4 +1,23 @@
-import './routes/access'
+import Route from '@ioc:Adonis/Core/Route'
 
-import './routes/users'
-import './routes/tickets'
+// import './routes/tickets'
+
+Route.group(() => {
+  // Authentication
+  Route.group(() => {
+    Route.post('login', 'AuthController.login')
+    Route.post('register', 'UsersController.store')
+    Route.post('logout', 'AuthController.logout').middleware('auth')
+  }).prefix('access')
+
+
+  // Users
+  Route.group(() => {
+    // Get, Update, Delete
+    Route.resource('users', 'UsersController').apiOnly().except(['store'])
+
+    Route.resource('tickets', 'TicketsController').apiOnly()
+
+    Route.get('users/:id/tickets', 'UsersController.showTickets')
+  }).middleware('auth')
+}).prefix('api')
