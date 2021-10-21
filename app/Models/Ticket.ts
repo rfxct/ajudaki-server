@@ -9,16 +9,17 @@ export default class Ticket extends BaseModel {
   public id: number
 
   @column()
+  public createdBy: number
+
+  @column()
+  public assignedTo: number
+
+  // Table columns
+  @column()
   public subject: string
 
   @column()
   public description: string
-
-  @column()
-  public createdBy: number
-
-  @column()
-  public assignedTo?: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
@@ -27,16 +28,16 @@ export default class Ticket extends BaseModel {
   public updatedAt: DateTime
 
   // Relacionamentos
+  @hasMany(() => TicketMessage)
+  public messages: HasMany<typeof TicketMessage>
+
   @belongsTo(() => User, {
-    localKey: 'createdBy'
+    foreignKey: 'createdBy'
   })
   public creator: BelongsTo<typeof User>
 
   @belongsTo(() => User, {
-    localKey: 'assignedTo'
+    foreignKey: 'assignedTo'
   })
   public helper: BelongsTo<typeof User>
-
-  @hasMany(() => TicketMessage)
-  public messages: HasMany<typeof TicketMessage>
 }
