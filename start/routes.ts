@@ -14,10 +14,11 @@ Route.group(() => {
   // Users
   Route.group(() => {
     // Get, Update, Delete
-    Route.resource('users', 'UsersController').apiOnly().except(['store'])
+    Route.resource('users', 'UsersController').apiOnly().except(['store', 'index'])
 
     Route.resource('tickets', 'TicketsController').apiOnly()
 
     Route.get('users/:id/tickets', 'UsersController.showTickets')
-  }).middleware('auth')
+    Route.get('users/:id/profile', 'UsersController.profile')
+  }).middleware('auth').middleware('rank,helper')
 }).prefix('api')
