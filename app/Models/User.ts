@@ -1,6 +1,6 @@
 import Hash from '@ioc:Adonis/Core/Hash'
 import { DateTime } from 'luxon'
-import { column, beforeSave, BaseModel, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import { column, afterFind, beforeSave, BaseModel, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import { UserRoles } from 'Contracts/enums'
 import Ticket from './Ticket'
 
@@ -10,6 +10,15 @@ export default class User extends BaseModel {
 
   @column()
   public email: string
+
+  @column()
+  public fullName: string
+
+  @column()
+  public firstName: string
+
+  @column()
+  public lastName: string
 
   @column({ serializeAs: null })
   public password: string
@@ -40,5 +49,11 @@ export default class User extends BaseModel {
     if (user.$dirty.password) {
       user.password = await Hash.make(user.password)
     }
+  }
+
+  // Virtual columns
+  @afterFind()
+  public static insertFullName(user: User) {
+    user.fullName = [user.firstName, user.lastName].join(' ')
   }
 }
