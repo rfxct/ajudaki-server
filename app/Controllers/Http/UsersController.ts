@@ -19,6 +19,14 @@ export default class UsersController {
     return User.findOrFail(id)
   }
 
+  public async profile({ params: { id } }: HttpContextContract) {
+    const user = await User.findOrFail(id)
+    
+    return ((
+      { updated_at, created_at, email, ...data }
+    ) => data)(user.toJSON())
+  }
+
   public async showTickets({ params: { id } }: HttpContextContract) {
     const user = await User.findOrFail(id)
     await user.load('tickets')

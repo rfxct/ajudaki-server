@@ -20,7 +20,13 @@ export default class TicketsController {
     return await Ticket.create({ createdBy, ...data })
   }
 
-  public async show({ }: HttpContextContract) {
+  public async show({ auth, params: { id } }: HttpContextContract) {
+    const targetId = auth.use('api').user!.id
+    const tickets = await Ticket.query()
+      .where('created_by', targetId)
+      .orWhere('assigned_to', targetId)
+
+    return tickets.find(t => t.id === Number(id)) || {}
   }
 
   public async update({ }: HttpContextContract) {
