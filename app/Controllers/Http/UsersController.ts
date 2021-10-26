@@ -21,7 +21,7 @@ export default class UsersController {
 
   public async profile({ params: { id } }: HttpContextContract) {
     const user = await User.findOrFail(id)
-    
+
     return ((
       { updated_at, created_at, email, ...data }
     ) => data)(user.toJSON())
