@@ -2,11 +2,20 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { UserRoles } from 'Contracts/enums'
 
 export default class CheckRank {
-  protected async checkRank(response: HttpContextContract['response'], user, minRole) {
+  protected async checkRank(
+    { auth, response, params, request }: HttpContextContract,
+    minRole
+  ) {
+
+    const user = auth.use('api').user
     const roles = Object.values(UserRoles)
     const minRolePosition = roles.indexOf(minRole)
 
-    if (roles.indexOf(user!.role) >= minRolePosition) {
+    const [, path] = request.url().split('/').filter(Boolean)
+    const self = ['users'].includes(path) && params.id === '@me'
+    params.id = self ? user?.id : params.id
+
+    if (roles.indexOf(user!.role) >= minRolePosition || self) {
       return true
     }
 
@@ -17,15 +26,12 @@ export default class CheckRank {
     })
   }
 
-  public async handle(
-    { auth, response }: HttpContextContract,
+  public async handle(contract: HttpContextContract,
     next: () => Promise<void>,
     [minRole]
   ) {
-    await auth.authenticate()
-
-    const user = auth.use('api').user
-    await this.checkRank(response, user, minRole)
+    await contract.auth.authenticate()
+    await this.checkRank(contract, minRole)
 
     await next()
   }
