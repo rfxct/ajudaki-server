@@ -2,6 +2,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 import CreateUser from 'App/Validators/CreateUserValidator'
 import User from 'App/Models/User'
+import Ticket from 'App/Models/Ticket'
 
 export default class UsersController {
   public async index({ }: HttpContextContract) {
@@ -28,12 +29,13 @@ export default class UsersController {
   }
 
   public async showTickets({ params: { id } }: HttpContextContract) {
-    const user = await User.findOrFail(id)
-    await user.load('tickets', ticketsBuilder =>
-      ticketsBuilder.preload('creator').preload('helper')
-    )
+    const tickets = await Ticket
+      .query()
+      .where('created_by', id)
+      .preload('creator')
+      .preload('helper')
 
-    return user.tickets
+    return tickets
   }
 
   public async update({ }: HttpContextContract) {
