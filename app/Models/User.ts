@@ -50,10 +50,4 @@ export default class User extends BaseModel {
       user.password = await Hash.make(user.password)
     }
   }
-
-  // Virtual columns
-  @afterFind()
-  public static insertFullName(user: User) {
-    user.fullName = [user.firstName, user.lastName].join(' ')
-  }
 }
