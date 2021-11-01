@@ -29,7 +29,9 @@ export default class UsersController {
 
   public async showTickets({ params: { id } }: HttpContextContract) {
     const user = await User.findOrFail(id)
-    await user.load('tickets')
+    await user.load('tickets', ticketsBuilder =>
+      ticketsBuilder.preload('creator').preload('helper')
+    )
 
     return user.tickets
   }
