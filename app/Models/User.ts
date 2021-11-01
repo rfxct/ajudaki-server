@@ -1,6 +1,6 @@
 import Hash from '@ioc:Adonis/Core/Hash'
 import { DateTime } from 'luxon'
-import { column, afterFind, beforeSave, BaseModel, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import { column, computed, beforeSave, BaseModel, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import { UserRoles } from 'Contracts/enums'
 import Ticket from './Ticket'
 
@@ -12,10 +12,12 @@ export default class User extends BaseModel {
   public email: string
 
   @column()
-  public fullName: string
-
-  @column()
   public firstName: string
+
+  @computed()
+  public get fullName() {
+    return this.firstName + ' ' + this.lastName
+  }
 
   @column()
   public lastName: string
