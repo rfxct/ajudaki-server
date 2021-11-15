@@ -20,13 +20,20 @@ export default class TicketsController {
     return await Ticket.create({ createdBy, ...data })
   }
 
-  public async show({ auth, params: { id } }: HttpContextContract) {
+  public async show({ response, auth, params: { id } }: HttpContextContract) {
     const targetId = auth.use('api').user!.id
     const tickets = await Ticket.query()
       .where('created_by', targetId)
       .orWhere('assigned_to', targetId)
 
-    return tickets.find(t => t.id === Number(id)) || {}
+    const ticket = tickets.find(t => t.id === Number(id)) || {}
+    if (!Object.keys(ticket).length && auth.use('api').user!.role !== 'admin') return response.status(403).send({
+      errors: [{
+        message: "E_UNAUTHORIZED_ACCESS: Você não possui permissão para visualizar este ticket"
+      }]
+    })
+
+    return ticket
   }
 
   public async update({ }: HttpContextContract) {
