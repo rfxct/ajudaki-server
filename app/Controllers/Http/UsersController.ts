@@ -11,7 +11,7 @@ export default class UsersController {
 
   public async store({ request }: HttpContextContract) {
     await request.validate(CreateUser)
-    const data = request.only(['email', 'password'])
+    const data = request.only(['email', 'password', 'first_name', 'last_name'])
 
     return await User.create(data)
   }
