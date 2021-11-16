@@ -28,12 +28,16 @@ export default class UsersController {
     ) => data)(user.toJSON())
   }
 
-  public async showTickets({ params: { id } }: HttpContextContract) {
+  public async showTickets({ request, params: { id } }: HttpContextContract) {
+    const page = request.input('page', 1)
+    const limit = 10
+
     const tickets = await Ticket
       .query()
       .where('created_by', id)
       .preload('creator')
       .preload('helper')
+      .paginate(page, limit)
 
     return tickets
   }
