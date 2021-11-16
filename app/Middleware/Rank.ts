@@ -1,4 +1,5 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import RankException from 'App/Exceptions/RankException'
 import { UserRoles } from 'Contracts/enums'
 
 export default class CheckRank {
@@ -19,11 +20,7 @@ export default class CheckRank {
       return true
     }
 
-    return response.status(403).send({
-      errors: [{
-        message: "E_UNAUTHORIZED_ACCESS: Você não possui o cargo necessário para executar esta ação"
-      }]
-    })
+    throw new RankException('Você não possui o cargo necessário para executar esta ação', 403, 'E_UNAUTHORIZED_ACCESS')
   }
 
   public async handle(contract: HttpContextContract,
