@@ -10,12 +10,16 @@ export default class TicketMessagesController {
   public async store({ auth, request, response, params: { ticketId } }: HttpContextContract) {
     await request.validate(CreateTicketMessage)
     const data = request.only(['content'])
-    const authorId = auth.use('api').user?.id
+    const authorId = auth.use('api').user!.id
 
-    const parentTicket = await Ticket.find(ticketId)
-    if (!parentTicket) return response.status(400).send({
+    const parentTicket = await Ticket.query()
+      .whereRaw('(created_by = :authorId OR assigned_to = :authorId) AND id = :ticketId', {
+        authorId, ticketId
+      }).first()
+
+    if (!parentTicket) return response.status(403).send({
       errors: [{
-        message: `E_BAD_REQUEST: Não existe um ticket para o id ${ticketId}`
+        message: `E_ACCES_DENIED: Você não possui permissão para acessar o ticket de id ${ticketId}`
       }]
     })
     return await TicketMessage.create({ authorId, ticketId, ...data })
