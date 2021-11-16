@@ -22,7 +22,10 @@ export default class TicketMessagesController {
         message: `E_ACCES_DENIED: Você não possui permissão para acessar o ticket de id ${ticketId}`
       }]
     })
-    return await TicketMessage.create({ authorId, ticketId, ...data })
+
+    const message = await TicketMessage.create({ authorId, ticketId, ...data })
+    await message.load('author')
+    return message
   }
 
   public async show({ }: HttpContextContract) {
