@@ -14,6 +14,8 @@ Route.group(() => {
     Route.group(() => {
       // Get, Update, Delete
       Route.resource('users', 'UsersController').apiOnly().except(['store', 'index'])
+      Route.resource('tickets', 'TicketsController').apiOnly().only(['index'])
+
 
       Route.get('users/:id/tickets', 'UsersController.showTickets')
       Route.get('users/:id/profile', 'UsersController.profile')
@@ -21,7 +23,7 @@ Route.group(() => {
       Route.get('tickets/:id/messages', 'TicketMessageController')
     }).middleware('rank,helper')
 
-    Route.resource('tickets', 'TicketsController').apiOnly()
+    Route.resource('tickets', 'TicketsController').apiOnly().except(['index'])
   }).middleware('auth')
 
 }).prefix('api')
