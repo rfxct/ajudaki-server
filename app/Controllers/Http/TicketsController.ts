@@ -28,7 +28,7 @@ export default class TicketsController {
       .orWhere('assigned_to', targetId)
       .preload('creator')
       .preload('helper')
-      .preload('messages')
+      .preload('messages', builder => builder.preload('author'))
 
     const ticket = tickets.find(t => t.id === Number(id)) || {}
     if (!Object.keys(ticket).length && auth.use('api').user!.role !== 'admin') return response.status(403).send({

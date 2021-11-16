@@ -20,7 +20,7 @@ Route.group(() => {
       Route.get('users/:id/tickets', 'UsersController.showTickets')
       Route.get('users/:id/profile', 'UsersController.profile')
 
-      Route.get('tickets/:id/messages', 'TicketMessageController')
+      Route.resource('tickets/:ticketId/messages', 'TicketMessagesController').apiOnly()
     }).middleware('rank,helper')
 
     Route.resource('tickets', 'TicketsController').apiOnly().except(['index'])

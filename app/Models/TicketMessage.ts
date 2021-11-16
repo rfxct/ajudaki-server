@@ -24,9 +24,13 @@ export default class TicketMessage extends BaseModel {
   public updatedAt: DateTime
 
   // Relacionamentos
-  @belongsTo(() => Ticket)
+  @belongsTo(() => Ticket, {
+    foreignKey: 'ticketId'
+  })
   public ticket: BelongsTo<typeof Ticket>
 
-  @belongsTo(() => User)
+  @belongsTo(() => User, {
+    foreignKey: 'authorId'
+  })
   public author: BelongsTo<typeof User>
 }

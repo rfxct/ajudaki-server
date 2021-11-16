@@ -36,7 +36,9 @@ export default class Ticket extends BaseModel {
   public updatedAt: DateTime
 
   // Relacionamentos
-  @hasMany(() => TicketMessage)
+  @hasMany(() => TicketMessage, {
+    foreignKey: 'ticketId'
+  })
   public messages: HasMany<typeof TicketMessage>
 
   @belongsTo(() => User, {
