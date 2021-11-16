@@ -3,11 +3,12 @@ import Ticket from 'App/Models/Ticket'
 import CreateTicket from 'App/Validators/CreateTicketValidator'
 
 export default class TicketsController {
-  public async index({ auth }: HttpContextContract) {
-    const targetId = auth.use('api').user!.id
+  public async index({ request }: HttpContextContract) {
+    const page = request.input('page', 1)
+    const limit = 10
+
     const tickets = await Ticket.query()
-      .where('created_by', targetId)
-      .orWhere('assigned_to', targetId)
+      .paginate(page, limit)
 
     return tickets
   }
@@ -25,6 +26,9 @@ export default class TicketsController {
     const tickets = await Ticket.query()
       .where('created_by', targetId)
       .orWhere('assigned_to', targetId)
+      .preload('creator')
+      .preload('helper')
+      .preload('messages')
 
     const ticket = tickets.find(t => t.id === Number(id)) || {}
     if (!Object.keys(ticket).length && auth.use('api').user!.role !== 'admin') return response.status(403).send({
