@@ -8,6 +8,8 @@ export default class TicketsController {
     const limit = 10
 
     const tickets = await Ticket.query()
+      .preload('creator')
+      .preload('helper')
       .paginate(page, limit)
 
     return tickets
