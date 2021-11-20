@@ -3,6 +3,8 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import CreateUser from 'App/Validators/CreateUserValidator'
 import User from 'App/Models/User'
 import Ticket from 'App/Models/Ticket'
+import { UserRoles } from 'Contracts/enums'
+import RankException from 'App/Exceptions/RankException'
 
 export default class UsersController {
   public async index({ }: HttpContextContract) {
@@ -42,9 +44,27 @@ export default class UsersController {
     return tickets
   }
 
+  public async showAssignedTickets({ request, params: { id } }: HttpContextContract) {
+    const page = request.input('page', 1)
+    const limit = 10
+
+    const tickets = await Ticket
+      .query()
+      .where('assigned_to', id)
+      .preload('creator')
+      .preload('helper')
+      .paginate(page, limit)
+
+    return tickets
+  }
+
   public async update({ }: HttpContextContract) {
   }
 
-  public async destroy({ }: HttpContextContract) {
+  public async destroy({ params: { id } }: HttpContextContract) {
+    const user = await User.findOrFail(id)
+    if (user.role === UserRoles.ADMIN) throw new RankException('Você não possui permissão para deletar este usuário')
+
+    await user.delete()
   }
 }

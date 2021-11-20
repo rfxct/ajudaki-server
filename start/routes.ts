@@ -13,11 +13,17 @@ Route.group(() => {
   Route.group(() => {
     Route.group(() => {
       // Get, Update, Delete
-      Route.resource('users', 'UsersController').apiOnly().except(['store', 'index'])
+      Route.resource('users', 'UsersController').apiOnly().except(['store', 'index', 'destroy'])
       Route.resource('tickets', 'TicketsController').apiOnly().only(['index'])
+
       Route.get('users/:id/tickets', 'UsersController.showTickets')
+      Route.get('users/:id/tickets/assigned', 'UsersController.showAssignedTickets')
       Route.get('users/:id/profile', 'UsersController.profile')
     }).middleware('rank,helper')
+
+    Route.group(() => {
+      Route.resource('tickets', 'TicketsController').apiOnly().only(['destroy'])
+    }).middleware('rank,admin')
 
     Route.resource('tickets/:ticketId/messages', 'TicketMessagesController').apiOnly()
     Route.resource('tickets', 'TicketsController').apiOnly().except(['index'])
