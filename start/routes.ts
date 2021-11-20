@@ -22,7 +22,7 @@ Route.group(() => {
     }).middleware('rank,helper')
 
     Route.group(() => {
-      Route.resource('tickets', 'TicketsController').apiOnly().only(['destroy'])
+      Route.resource('users', 'UsersController').apiOnly().only(['destroy'])
     }).middleware('rank,admin')
 
     Route.resource('tickets/:ticketId/messages', 'TicketMessagesController').apiOnly()
