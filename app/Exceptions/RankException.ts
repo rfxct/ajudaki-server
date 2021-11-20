@@ -13,4 +13,11 @@ import { Exception } from '@adonisjs/core/build/standalone'
 |
 */
 export default class RankException extends Exception {
+  constructor(
+    message: string = 'Você não possui permissão para executar esta ação',
+    status: number = 403,
+    code: string = 'E_INSUFICIENT_PERMISSION'
+    ) {
+    super(message, status, code)
+  }
 }
