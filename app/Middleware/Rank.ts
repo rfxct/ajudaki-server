@@ -4,7 +4,7 @@ import { UserRoles } from 'Contracts/enums'
 
 export default class CheckRank {
   protected async checkRank(
-    { auth, response, params, request }: HttpContextContract,
+    { auth, params, request }: HttpContextContract,
     minRole
   ) {
 
@@ -20,7 +20,7 @@ export default class CheckRank {
       return true
     }
 
-    throw new RankException('Você não possui o cargo necessário para executar esta ação', 403, 'E_UNAUTHORIZED_ACCESS')
+    throw new RankException('Você não possui permissão para executar esta ação')
   }
 
   public async handle(contract: HttpContextContract,
