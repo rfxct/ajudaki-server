@@ -1,4 +1,5 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import RankException from 'App/Exceptions/RankException'
 import Ticket from 'App/Models/Ticket'
 import CreateTicket from 'App/Validators/CreateTicketValidator'
 
@@ -23,21 +24,18 @@ export default class TicketsController {
     return await Ticket.create({ createdBy, ...data })
   }
 
-  public async show({ response, auth, params: { id } }: HttpContextContract) {
+  public async show({ auth, params: { id } }: HttpContextContract) {
     const targetId = auth.use('api').user!.id
-    const tickets = await Ticket.query()
-      .where('created_by', targetId)
-      .orWhere('assigned_to', targetId)
-      .preload('creator')
-      .preload('helper')
-      .preload('messages', builder => builder.preload('author'))
 
-    const ticket = tickets.find(t => t.id === Number(id)) || {}
-    if (!Object.keys(ticket).length && auth.use('api').user!.role !== 'admin') return response.status(403).send({
-      errors: [{
-        message: "E_UNAUTHORIZED_ACCESS: Você não possui permissão para visualizar este ticket"
-      }]
-    })
+    const ticket = await Ticket.findOrFail(id)
+    await ticket.load('creator')
+    await ticket.load('helper')
+    await ticket.load('messages', builder => builder.preload('author'))
+
+    if (
+      ticket.status === 'em curso' &&
+      ![ticket.createdBy, ticket.assignedTo].includes(targetId)
+    ) throw new RankException('Você não possui permissão para visualizar este ticket', 403, 'E_ACCES_DENIED')
 
     return ticket
   }
