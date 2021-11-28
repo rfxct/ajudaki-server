@@ -13,7 +13,7 @@ export default class Ticket extends BaseModel {
 
   @computed()
   public get status() {
-    return this.finished ? 'resolvido' : (typeof this.assignedTo === 'number' ? 'em curso' : 'pendente')
+    return this.finished ? 'finalizado' : (typeof this.assignedTo === 'number' ? 'em curso' : 'pendente')
   }
 
   @column()
