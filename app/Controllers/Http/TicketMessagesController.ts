@@ -5,7 +5,18 @@ import TicketMessage from 'App/Models/TicketMessage'
 import CreateTicketMessage from 'App/Validators/CreateTicketMessageValidator'
 
 export default class TicketMessagesController {
-  public async index({ }: HttpContextContract) {
+  public async index({ auth, params: { ticketId } }: HttpContextContract) {
+    const targetId = auth.use('api').user!.id
+
+    const ticket = await Ticket.findOrFail(ticketId)
+    await ticket.load('messages', builder => builder.preload('author'))
+
+    if (
+      ticket.status === 'em curso' &&
+      ![ticket.createdBy, ticket.assignedTo].includes(targetId)
+    ) throw new RankException('Você não possui permissão para visualizar este ticket', 403, 'E_ACCES_DENIED')
+
+    return ticket.messages.sort((a, b) => a.createdAt.toMillis() - b.createdAt.toMillis())
   }
 
   public async store({ auth, request, params: { ticketId } }: HttpContextContract) {
