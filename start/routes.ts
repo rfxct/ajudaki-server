@@ -16,6 +16,10 @@ Route.group(() => {
       Route.resource('users', 'UsersController').apiOnly().except(['store', 'index', 'destroy'])
       Route.resource('tickets', 'TicketsController').apiOnly().only(['index'])
 
+      // Ticket handlign
+      Route.post('tickets/:id/finish', 'TicketsController.finishTicket')
+      Route.post('tickets/:id/accept', 'TicketsController.acceptTicket')
+
       Route.get('users/:id/tickets', 'UsersController.showTickets')
       Route.get('users/:id/tickets/assigned', 'UsersController.showAssignedTickets')
       Route.get('users/:id/profile', 'UsersController.profile')
