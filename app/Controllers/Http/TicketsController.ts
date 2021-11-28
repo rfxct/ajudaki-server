@@ -82,10 +82,4 @@ export default class TicketsController {
 
     return ticket
   }
-
-  public async update({ }: HttpContextContract) {
-  }
-
-  public async destroy({ }: HttpContextContract) {
-  }
 }

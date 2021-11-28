@@ -38,13 +38,4 @@ export default class TicketMessagesController {
 
     return message
   }
-
-  public async show({ }: HttpContextContract) {
-  }
-
-  public async update({ }: HttpContextContract) {
-  }
-
-  public async destroy({ }: HttpContextContract) {
-  }
 }

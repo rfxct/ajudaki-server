@@ -58,9 +58,6 @@ export default class UsersController {
     return tickets
   }
 
-  public async update({ }: HttpContextContract) {
-  }
-
   public async destroy({ params: { id } }: HttpContextContract) {
     const user = await User.findOrFail(id)
     if (user.role === UserRoles.ADMIN) throw new RankException('Você não possui permissão para deletar este usuário')
